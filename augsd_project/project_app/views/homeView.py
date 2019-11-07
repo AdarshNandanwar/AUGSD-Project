@@ -3,14 +3,14 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 
 from django.views import View
-from project_app.forms import InstructorForm, SubSectionForm
+from project_app.forms import *
 
 class HomeView(generic.TemplateView):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'homePage.html')
 
 class AddCourseForm(View):
-    form_class = SubSectionForm
+    form_class = CourseForm
     initial = {'key': 'value'}
     template_name = 'addCourseForm.html'
 
