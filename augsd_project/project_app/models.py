@@ -18,4 +18,20 @@ class SubSection(models.Model):
     startTime = models.IntegerField()
     endTime = models.IntegerField()
     # room = models.ForeignKey(Room, related_name='room', default=None)
-    courseCode = models.CharField(max_length = 10)
+    courseCode = models.ForeignKey(Course,related_name="courseCode",default=None)
+
+class Course(models.Model):
+	courseCode = models.CharField(max_length=10)
+	courseName = models.CharField(max_length=50)
+	midsemDateTime = models.DateTimeField(null=false)
+	compreDateTime = models.DateTimeField(null=false)
+	courseIC = models.ForeignKey(Instructor,related_name="InstructorIncharge",default=None)
+	sections = models.ManyToManyField(Section)
+
+class Section(models.Model):
+	courseCode = models.ForeignKey(Course,related_name="courseCode",default=None)
+	ltp = models.ForeignKey(subSection,related_name="ltp",default=None)  
+
+
+
+
