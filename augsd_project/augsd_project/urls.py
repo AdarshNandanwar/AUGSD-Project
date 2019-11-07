@@ -15,9 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from project_app import views
+# from project_app import views
+import project_app.views as VIEWS
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.home_view, name='home'),
+    url(r'^add-course/', VIEWS.AddCourseForm.as_view()),
+    url(r'^modify-course/', VIEWS.ModifyCourseForm.as_view()),
+    url(r'^delete-course/', VIEWS.DeleteCourseForm.as_view()),
+    url(r'^$', VIEWS.HomeView.as_view(), name='home'),
 ]
