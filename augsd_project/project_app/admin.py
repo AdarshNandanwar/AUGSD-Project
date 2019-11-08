@@ -9,3 +9,6 @@ from .models import *
 
 admin.site.register(SubSection)
 admin.site.register(Instructor)
+admin.site.register(Room)
+admin.site.register(Course)
+admin.site.register(Section)

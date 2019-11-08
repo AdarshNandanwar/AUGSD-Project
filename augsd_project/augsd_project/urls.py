@@ -22,7 +22,11 @@ import project_app.views as VIEWS
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^add-course/', VIEWS.AddCourseForm.as_view()),
+    url(r'^add-section/', VIEWS.AddSectionForm.as_view()),
+    url(r'^add-subsection/', VIEWS.AddSubSectionForm.as_view()),
     url(r'^modify-course/', VIEWS.ModifyCourseForm.as_view()),
     url(r'^delete-course/', VIEWS.DeleteCourseForm.as_view()),
+    url(r'^delete-section/', VIEWS.DeleteSectionForm.as_view()),
+    url(r'^delete-subsection/', VIEWS.DeleteSubSectionForm.as_view()),
     url(r'^$', VIEWS.HomeView.as_view(), name='home'),
 ]
