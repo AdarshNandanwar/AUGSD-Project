@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.validators import MinLengthValidator
 from django.db import models
 
 # Create your models here.
@@ -37,13 +38,19 @@ class Section(models.Model):
         return str((self.course, self.sectionNumber))
 
 class SubSection(models.Model):
+    TYPE_CHOICES = (
+        ('L', 'Lecture'),
+        ('T', 'Tutorial'),
+        ('P', 'Practical'),
+        ('I', 'Independent'),
+    )
     instructor1 = models.ForeignKey(Instructor, related_name='subSection1', default=None)   #backward relationship
     instructor2 = models.ForeignKey(Instructor, related_name='subSection2', default=None, null=True, blank=True)   #backward relationship
-    days = models.CharField(max_length = 7)
+    days = models.CharField(max_length = 7, validators=[MinLengthValidator(7)])
     startTime = models.IntegerField()
     endTime = models.IntegerField()
     room = models.ForeignKey(Room, related_name='subSection', default=None)
-    type = models.CharField(max_length = 1)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     section = models.ForeignKey(Section,related_name="subSection",default=None)
 
     def __str__(self):

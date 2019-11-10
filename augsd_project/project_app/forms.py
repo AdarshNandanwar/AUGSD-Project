@@ -7,7 +7,7 @@ class ViewInstructorForm(forms.ModelForm):
         model = Instructor  
         fields = ['instructorName']
 
-class CourseForm(forms.ModelForm):  
+class CourseForm(forms.ModelForm):
     class Meta:  
         model = Course  
         fields = "__all__"  

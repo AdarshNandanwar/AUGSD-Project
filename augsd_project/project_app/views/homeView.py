@@ -41,8 +41,22 @@ class AddSectionForm(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             # <process form cleaned data>
-            form.save()
-            return HttpResponseRedirect('/')
+
+            course = form.cleaned_data.get('course')
+            formSectionNumber = form.cleaned_data.get('sectionNumber')
+            sectionList = course.section.all()
+            isValid = True
+            for s in sectionList:
+                if(s.sectionNumber == formSectionNumber):
+                    isValid = False
+                    message = "Section number "+formSectionNumber+" already exists in this course"
+
+            if(isValid):
+                form.save()
+                return HttpResponseRedirect('/')
+            else:
+                print(message)
+                # show some message when the form is not saved
 
         return render(request, self.template_name, {'form': form})
 
@@ -59,13 +73,81 @@ class AddSubSectionForm(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             # <process form cleaned data>
-            form.save()
-            return HttpResponseRedirect('/')
+
+            isValid = True
+            formType = form.cleaned_data.get('type')
+            formSection = form.cleaned_data.get('section')
+            formRoom = form.cleaned_data.get('room')
+            formStartTime = form.cleaned_data.get('startTime')
+            formEndTime = form.cleaned_data.get('endTime')
+            formDays = form.cleaned_data.get('days')
+            formInstructor1 = form.cleaned_data.get('instructor1')
+            formInstructor2 = form.cleaned_data.get('instructor2')
+
+            if(formStartTime>=formEndTime):
+                isValid = False
+                message = "Start time must be less than end time!"
+            if(formDays=="0000000"):
+                isValid = False
+                message = "Please select atleast 1 day"
+            if(formInstructor1==formInstructor2):
+                isValid = False
+                message = "Two instructors can't be same" 
+            # checking if subSection already exists
+            repeatingSubSectionList = SubSection.objects.filter(section=formSection, type=formType)
+            print(repeatingSubSectionList)
+            if repeatingSubSectionList.exists():
+                isValid = False
+                message = "This SubSection already exists."
+
+            if not isValid:
+                print(message)
+                return render(request, self.template_name, {'form': form})
+                # show some message when the form is not saved 
+
+            # checking clashes with classroom
+            subSectionList = formRoom.subSection.all()
+            for ss in subSectionList:
+                for dayNumber in range(7):
+                    if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
+                        if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
+                            isValid = False
+                            message = "Class is already occupied by "+str(ss)+"!"
+
+            if not isValid:
+                print(message)
+                return render(request, self.template_name, {'form': form})
+                # show some message when the form is not saved 
+
+            # checking clashes with Instructors
+            subSectionList1 = formInstructor1.subSection1.all() | formInstructor1.subSection2.all()
+            subSectionList2 = formInstructor2.subSection1.all() | formInstructor2.subSection2.all()
+            print(subSectionList1)
+            print(subSectionList2)
+            for ss in subSectionList1:
+                for dayNumber in range(7):
+                    if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
+                        if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
+                            isValid = False
+                            message = formInstructor1.name+" is not free at this time."
+            for ss in subSectionList2:
+                for dayNumber in range(7):
+                    if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
+                        if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
+                            isValid = False
+                            message = formInstructor2.name+" is not free at this time."
+
+            if(isValid):
+                form.save()
+                return HttpResponseRedirect('/')
+            else:
+                print(message)
+                return render(request, self.template_name, {'form': form})
+                # show some message when the form is not saved 
 
         return render(request, self.template_name, {'form': form})
 
 
-# delete classes
 
 class DeleteCourseForm(View):
     form_class = DeleteCourseForm
@@ -92,7 +174,7 @@ class DeleteCourseForm(View):
             print(c)
             print(c.section)
                 
-            # s.delete()
+            s.delete()
             return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
@@ -149,7 +231,6 @@ class ViewTimetableForm(View):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
-        print(form)
         return render(request, self.template_name, {'form': form, 'displayTable': False})
 
     def post(self, request, *args, **kwargs):
@@ -158,7 +239,7 @@ class ViewTimetableForm(View):
             # <process form cleaned data>
             # form.save()
             instr = form.cleaned_data.get('instructorName')
-            sectionList = instr.subSection1.all()
+            sectionList = instr.subSection1.all() | instr.subSection2.all()
             return render(request, self.template_name, {'form': form, 'sectionList': sectionList, 'displayTable': sectionList.exists()})
             # return HttpResponseRedirect('/')
 
