@@ -1,4 +1,5 @@
 from django import forms  
+from django.forms import DateTimeField
 from .models import Instructor, SubSection, Course, Section
   
 class ViewInstructorForm(forms.ModelForm):
@@ -8,6 +9,8 @@ class ViewInstructorForm(forms.ModelForm):
         fields = ['instructorName']
 
 class CourseForm(forms.ModelForm):
+    midsemDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Midsem Date and Time (dd/mm/yy h)")
+    compreDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Compre Date and Time (dd/mm/yy h)")
     class Meta:  
         model = Course  
         fields = "__all__"  
@@ -22,7 +25,7 @@ class CourseForm(forms.ModelForm):
 class SectionForm(forms.ModelForm):  
     class Meta:  
         model = Section  
-        fields = ['course','sectionNumber']
+        fields = "__all__"  
         labels = {
             "sectionNumber": "Section Number",
         }
@@ -34,8 +37,9 @@ class SubSectionForm(forms.ModelForm):
         labels = {
             "instructor1": "Instructor 1",
             "instructor2": "Instructor 2",
-            "startTime": "Start Time",
-            "endTime": "End Time",
+            "days": "Days(6 length bitstring M,W,F = 101010)",
+            "startTime": "Start Time Hour(24 hour format)",
+            "endTime": "End Time Hour(24 hour format)",
         }
 
 # class DeleteCourseForm(forms.ModelForm):  

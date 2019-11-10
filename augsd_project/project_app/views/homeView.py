@@ -1,3 +1,6 @@
+import csv
+from django.http import HttpResponse
+
 from django.shortcuts import render
 from django.views import generic
 from django.http import HttpResponseRedirect
@@ -95,7 +98,6 @@ class AddSubSectionForm(View):
                 message = "Two instructors can't be same" 
             # checking if subSection already exists
             repeatingSubSectionList = SubSection.objects.filter(section=formSection, type=formType)
-            print(repeatingSubSectionList)
             if repeatingSubSectionList.exists():
                 isValid = False
                 message = "This SubSection already exists."
@@ -108,7 +110,7 @@ class AddSubSectionForm(View):
             # checking clashes with classroom
             subSectionList = formRoom.subSection.all()
             for ss in subSectionList:
-                for dayNumber in range(7):
+                for dayNumber in range(6):
                     if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
                         if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
                             isValid = False
@@ -121,21 +123,20 @@ class AddSubSectionForm(View):
 
             # checking clashes with Instructors
             subSectionList1 = formInstructor1.subSection1.all() | formInstructor1.subSection2.all()
-            subSectionList2 = formInstructor2.subSection1.all() | formInstructor2.subSection2.all()
-            print(subSectionList1)
-            print(subSectionList2)
             for ss in subSectionList1:
-                for dayNumber in range(7):
+                for dayNumber in range(6):
                     if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
                         if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
                             isValid = False
                             message = formInstructor1.name+" is not free at this time."
-            for ss in subSectionList2:
-                for dayNumber in range(7):
-                    if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
-                        if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
-                            isValid = False
-                            message = formInstructor2.name+" is not free at this time."
+            if formInstructor2 is not None:
+                subSectionList2 = formInstructor2.subSection1.all() | formInstructor2.subSection2.all()
+                for ss in subSectionList2:
+                    for dayNumber in range(6):
+                        if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
+                            if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
+                                isValid = False
+                                message = formInstructor2.name+" is not free at this time."
 
             if(isValid):
                 form.save()
@@ -161,20 +162,8 @@ class DeleteCourseForm(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            # <process form cleaned data>
-            # add delte logic here
-
-            # c = Course.objects.filter(courseCode=form.cleaned_data['courseCode'])
-            # print(type(c))
-            # for course in c:
-            #     print(type(course))
-            #     print(type(course.section))
-
             c = Course.objects.get(courseCode=form.cleaned_data['courseCode'])
-            print(c)
-            print(c.section)
-                
-            s.delete()
+            c.delete()
             return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
@@ -224,6 +213,14 @@ class ModifyCourseForm(generic.TemplateView):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'modifyCourseForm.html')
 
+class ModifySectionForm(generic.TemplateView):
+	def get(self, request, *args, **kwargs):
+		return render(request, 'modifySectionForm.html')
+
+class ModifySubSectionForm(generic.TemplateView):
+	def get(self, request, *args, **kwargs):
+		return render(request, 'modifySubSectionForm.html')
+
 class ViewTimetableForm(View):
     form_class = ViewInstructorForm
     initial = {'key': 'value'}
@@ -244,3 +241,45 @@ class ViewTimetableForm(View):
             # return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
+
+class DownloadTimeTable(View):
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="TimeTable.csv"'
+        courseList = Course.objects.filter()
+        writer = csv.writer(response)
+        writer.writerow(['COURSENO', 'COURSETITLE', 'SEC', 'STAT', 'INSTRUCTOR IN CHARGE/Instructor', 'DAYS/ H', 'ROOM', 'COMPRE DATE'])
+        for course in courseList:
+            sectionList = course.section.all()
+            for section in sectionList:
+                subSectionList = section.subSection.all()
+                for subSection in subSectionList:
+                    formatedDaysTime = ""
+                    for i in range(6):
+                        if(subSection.days[i] == '0'):
+                            continue
+                        if(i==0):
+                            formatedDaysTime += "M "
+                        if(i==1):
+                            formatedDaysTime += "T "
+                        if(i==2):
+                            formatedDaysTime += "W "
+                        if(i==3):
+                            formatedDaysTime += "TH "
+                        if(i==4):
+                            formatedDaysTime += "F "
+                        if(i==5):
+                            formatedDaysTime += "S "
+                    for i in range(subSection.startTime, subSection.endTime):
+                        formatedDaysTime += str(i-7) + " "
+                    if(subSection.instructor1==course.courseIC):
+                        formatedInstructor = subSection.instructor1.name.upper()
+                    else:
+                        formatedInstructor = subSection.instructor1.name
+                    if subSection.instructor2 is not None:
+                        if(subSection.instructor2==course.courseIC):
+                            formatedInstructor += ", "+subSection.instructor2.name.upper() 
+                        else:
+                            formatedInstructor += ", "+subSection.instructor2.name
+                    writer.writerow([course.courseCode,course.courseName,section.sectionNumber,subSection.type,formatedInstructor, formatedDaysTime, subSection.room, course.compreDateTime.strftime("%d/%m/%y %H")])
+        return response
