@@ -81,6 +81,18 @@ class DeleteCourseForm(View):
         if form.is_valid():
             # <process form cleaned data>
             # add delte logic here
+
+            # c = Course.objects.filter(courseCode=form.cleaned_data['courseCode'])
+            # print(type(c))
+            # for course in c:
+            #     print(type(course))
+            #     print(type(course.section))
+
+            c = Course.objects.get(courseCode=form.cleaned_data['courseCode'])
+            print(c)
+            print(c.section)
+                
+            # s.delete()
             return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
@@ -99,6 +111,8 @@ class DeleteSectionForm(View):
         if form.is_valid():
             # <process form cleaned data>
             # add delte logic here
+            s = Section.objects.filter(course=form.instance.course, sectionNumber=form.instance.sectionNumber)
+            s.delete()
             return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
@@ -127,3 +141,25 @@ class DeleteSubSectionForm(View):
 class ModifyCourseForm(generic.TemplateView):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'modifyCourseForm.html')
+
+class ViewTimetableForm(View):
+    form_class = ViewInstructorForm
+    initial = {'key': 'value'}
+    template_name = 'viewTimetableForm.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        print(form)
+        return render(request, self.template_name, {'form': form, 'displayTable': False})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            # <process form cleaned data>
+            # form.save()
+            instr = form.cleaned_data.get('instructorName')
+            sectionList = instr.subSection1.all()
+            return render(request, self.template_name, {'form': form, 'sectionList': sectionList, 'displayTable': sectionList.exists()})
+            # return HttpResponseRedirect('/')
+
+        return render(request, self.template_name, {'form': form})

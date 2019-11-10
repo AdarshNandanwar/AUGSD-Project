@@ -1,10 +1,11 @@
 from django import forms  
 from .models import Instructor, SubSection, Course, Section
   
-class InstructorForm(forms.ModelForm):  
+class ViewInstructorForm(forms.ModelForm):
+    instructorName = forms.ModelChoiceField(queryset=Instructor.objects.all(), required=True, label="Instructor Name")   #backward relationship
     class Meta:  
         model = Instructor  
-        fields = "__all__"  
+        fields = ['instructorName']
 
 class CourseForm(forms.ModelForm):  
     class Meta:  
@@ -37,13 +38,17 @@ class SubSectionForm(forms.ModelForm):
             "endTime": "End Time",
         }
 
-class DeleteCourseForm(forms.ModelForm):  
-    class Meta:  
-        model = Course  
-        fields = ['courseCode']
-        labels = {
-            "courseCode": "Course Code",
-        }
+# class DeleteCourseForm(forms.ModelForm):  
+#     class Meta:  
+#         model = Course  
+#         fields = ['courseCode']
+#         labels = {
+#             "courseCode": "Course Code",
+#         }
+
+class DeleteCourseForm(forms.Form):  
+    courseCode = forms.CharField(max_length=10)
+
 
 class DeleteSectionForm(forms.ModelForm):  
     class Meta:  

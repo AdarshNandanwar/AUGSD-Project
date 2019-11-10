@@ -1,45 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- BOOTSTRAP STARTS-->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
-    <!-- BOOTSTRAP ENDS-->
-    <title>Add Section</title>
-</head>
+{% load crispy_forms_tags %}
 
-<body>
-    <div class="container">
-        <div class="row text-center" style="margin-top: 10%;">
-            <div class="col-6 shadow mb-5 table-light rounded" style="padding: 80px 0px; margin: 0px auto; background-color: rgba(0, 0, 0, 0.05);">
-                <h1>Add Section</h1>
-                <div class="row">
-                    <div class="col" style="margin: 0px auto;">
-                        <form action="/add-section/" method="post">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            <input type="submit" value="Submit">
-                        </form>
-                    </div>
+{% block content %}
+
+<div class="container">
+    <div class="row text-center" style="margin-top: 5%;">
+        <div class="col-6 shadow mb-5 table-light rounded"
+            style="padding: 80px 40px; margin: 0px auto; background-color: rgba(0, 0, 0, 0.05);">
+            <h1>Add Section</h1>
+            <div class="row">
+                <div class="col" style="margin: 0px auto;">
+                    <form action="/add-section/" method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <input class="btn btn-primary" type="submit" value="Submit">
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
-</body>
-
-</html>
+{% endblock %}

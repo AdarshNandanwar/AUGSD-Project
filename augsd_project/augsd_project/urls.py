@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'^delete-course/', VIEWS.DeleteCourseForm.as_view()),
     url(r'^delete-section/', VIEWS.DeleteSectionForm.as_view()),
     url(r'^delete-subsection/', VIEWS.DeleteSubSectionForm.as_view()),
+    url(r'^view-timetable/', VIEWS.ViewTimetableForm.as_view()),
     url(r'^$', VIEWS.HomeView.as_view(), name='home'),
 ]
