@@ -9,12 +9,13 @@
         <div class="col-md-6 shadow mb-5 table-light rounded"
             style="padding: 80px 40px; margin: 0px auto; background-color: rgba(0, 0, 0, 0.05);">
 
-            <h1>Modify Section</h1>
+            <h1>Modify SubSection {{ subSection }}</h1>
             <div class="row">
                 <div class="col" style="margin: 0px auto;">
-                    <form action="/modify-section/id/" method="GET">
+                    <form action="/modify-subsection/" method="POST">
                         {% csrf_token %}
                         {{ form|crispy }}
+                        <input type="hidden" name="subSection" value="{{ subSection }}" />
                         <input class="btn btn-dark" type="submit" value="Submit">
                     </form>
                 </div>

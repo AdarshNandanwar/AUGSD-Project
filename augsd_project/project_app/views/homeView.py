@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import generic
 from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.forms.models import model_to_dict
 
 from django.views import View
 from project_app.forms import *
@@ -27,6 +29,7 @@ class AddCourseForm(View):
         if form.is_valid():
             # <process form cleaned data>
             form.save()
+            messages.success(request, "Course added successfully.", extra_tags='alert-success')
             return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
@@ -52,14 +55,14 @@ class AddSectionForm(View):
             for s in sectionList:
                 if(s.sectionNumber == formSectionNumber):
                     isValid = False
-                    message = "Section number "+formSectionNumber+" already exists in this course"
-
+                    message = "Section number "+str(formSectionNumber)+" already exists in this course"
+                    
             if(isValid):
                 form.save()
+                messages.success(request, "Section added successfully.", extra_tags='alert-success')
                 return HttpResponseRedirect('/')
             else:
-                print(message)
-                # show some message when the form is not saved
+                messages.error(request, message, extra_tags='alert-danger')
 
         return render(request, self.template_name, {'form': form})
 
@@ -89,7 +92,7 @@ class AddSubSectionForm(View):
 
             if(formStartTime>=formEndTime):
                 isValid = False
-                message = "Start time must be less than end time!"
+                message = "Start time must be less than end time."
             if(formDays=="0000000"):
                 isValid = False
                 message = "Please select atleast 1 day"
@@ -103,9 +106,8 @@ class AddSubSectionForm(View):
                 message = "This SubSection already exists."
 
             if not isValid:
-                print(message)
+                messages.error(request, message, extra_tags='alert-danger')
                 return render(request, self.template_name, {'form': form})
-                # show some message when the form is not saved 
 
             # checking clashes with classroom
             subSectionList = formRoom.subSection.all()
@@ -114,12 +116,11 @@ class AddSubSectionForm(View):
                     if (ss.days[dayNumber]=='1' and formDays[dayNumber]=='1'):
                         if not(int(formEndTime)<=int(ss.startTime) or int(ss.endTime)<=int(formStartTime)):
                             isValid = False
-                            message = "Class is already occupied by "+str(ss)+"!"
+                            message = "Class is already occupied by "+str(ss)+"."
 
             if not isValid:
-                print(message)
+                messages.error(request, message, extra_tags='alert-danger')
                 return render(request, self.template_name, {'form': form})
-                # show some message when the form is not saved 
 
             # checking clashes with Instructors
             subSectionList1 = formInstructor1.subSection1.all() | formInstructor1.subSection2.all()
@@ -140,18 +141,142 @@ class AddSubSectionForm(View):
 
             if(isValid):
                 form.save()
+                messages.success(request, "Sub section added successfully.", extra_tags='alert-success')
                 return HttpResponseRedirect('/')
             else:
-                print(message)
+                messages.error(request, message, extra_tags='alert-danger')
                 return render(request, self.template_name, {'form': form})
-                # show some message when the form is not saved 
 
         return render(request, self.template_name, {'form': form})
 
+class ModifyCourseForm(generic.TemplateView):
+    form_class = EditCourseForm
+    modify_form_class = ModifyCourseForm
+    initial = {'key': 'value'}
+    template_name = 'modifyCourseForm.html'
+    modify_template_name = 'modifySelectedCourseForm.html'
 
+    def get(self, request, *args, **kwargs):
+        paramsCourseCode = request.GET.get('courseCode', None)
+        if paramsCourseCode is None:
+            form = self.form_class(initial=self.initial)
+            return render(request, self.template_name, {'form': form})
+        else:
+            courseList = Course.objects.filter(courseCode=paramsCourseCode) 
+            if courseList:
+                form = self.modify_form_class(instance=courseList.first())
+                return render(request, self.modify_template_name, {'form': form, 'courseCode': paramsCourseCode})
+            else:
+                form = self.form_class(initial=self.initial)
+                messages.error(request, "Course not found.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.modify_form_class(request.POST)
+        if form.is_valid():
+            # <process form cleaned data>
+            currentCourseCode = request.POST.get('courseCode', None)
+            Course.objects.filter(courseCode=currentCourseCode).update(courseName=form.cleaned_data['courseName'], courseIC=form.cleaned_data['courseIC'], midsemDateTime=form.cleaned_data['midsemDateTime'], compreDateTime=form.cleaned_data['compreDateTime'])
+            messages.success(request, "Course modified successfully.", extra_tags='alert-success')
+            return HttpResponseRedirect('/')
+
+        return render(request, self.modify_template_name, {'form': form})
+
+class ModifySectionForm(generic.TemplateView):
+    form_class = EditSectionForm
+    modify_form_class = ModifySectionForm
+    initial = {'key': 'value'}
+    template_name = 'modifySectionForm.html'
+    modify_template_name = 'modifySelectedSectionForm.html'
+
+    def get(self, request, *args, **kwargs):
+        paramsCourse = request.GET.get('course', None)
+        paramsSectionNumber = request.GET.get('sectionNumber', None)
+        if paramsCourse is None:
+            form = self.form_class(initial=self.initial)
+            return render(request, self.template_name, {'form': form})
+        else:
+            courseList = Course.objects.filter(courseCode=paramsCourse) 
+            if courseList:
+                sectionList = Section.objects.filter(course=courseList.first(), sectionNumber=paramsSectionNumber) 
+                if sectionList:
+                    form = self.modify_form_class(instance=sectionList.first())
+                    return render(request, self.modify_template_name, {'form': form, 'course': paramsCourse, 'currentSectionNumber': paramsSectionNumber})
+                else:
+                    form = self.form_class(initial=self.initial)
+                    messages.error(request, "Section not found.", extra_tags='alert-danger')
+                    return render(request, self.template_name, {'form': form})
+            else:
+                form = self.form_class(initial=self.initial)
+                messages.error(request, "Course not found.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.modify_form_class(request.POST)
+        if form.is_valid():
+            # <process form cleaned data>
+            currentCourse = request.POST.get('course', None)
+            currentSectionNumber = request.POST.get('currentSectionNumber', None)
+            currentCourseList = Course.objects.filter(courseCode=currentCourse)
+            # checking if sectionNumber is already in use
+            sectionList = currentCourseList.first().section.all()
+            for section in sectionList:
+                if(section.sectionNumber == int(form.cleaned_data['sectionNumber'])):
+                    message = "Section number "+str(form.cleaned_data['sectionNumber'])+" already exists in this course"
+                    messages.error(request, message, extra_tags='alert-danger')
+                    form = self.form_class(initial=self.initial)
+                    return render(request, self.template_name, {'form': form})
+            Section.objects.filter(course=currentCourseList.first(), sectionNumber=currentSectionNumber).update(sectionNumber=form.cleaned_data['sectionNumber'])
+            messages.success(request, "Section modified successfully.", extra_tags='alert-success')
+            return HttpResponseRedirect('/')
+
+        return render(request, self.modify_template_name, {'form': form})
+
+class ModifySubSectionForm(generic.TemplateView):
+    form_class = EditSubSectionForm
+    modify_form_class = ModifySubSectionForm
+    initial = {'key': 'value'}
+    template_name = 'modifySubSectionForm.html'
+    modify_template_name = 'modifySelectedSubSectionForm.html'
+
+    def get(self, request, *args, **kwargs):
+        paramsSection = request.GET.get('section', None)
+        paramsType = request.GET.get('type', None)
+        print(paramsSection)
+        if paramsSection is None:
+            form = self.form_class(initial=self.initial)
+            return render(request, self.template_name, {'form': form})
+        else:
+            courseList = Course.objects.filter(courseCode=paramsCourse) 
+            if courseList:
+                SubSectionList = SubSection.objects.filter(course=courseList.first(), sectionNumber=paramsSectionNumber) 
+                if SubSectionList:
+                    form = self.modify_form_class(instance=sectionList.first())
+                    return render(request, self.modify_template_name, {'form': form, 'course': paramsCourse, 'currentSectionNumber': paramsSectionNumber})
+                else:
+                    form = self.form_class(initial=self.initial)
+                    messages.error(request, "Section not found.", extra_tags='alert-danger')
+                    return render(request, self.template_name, {'form': form})
+            else:
+                form = self.form_class(initial=self.initial)
+                messages.error(request, "Course not found.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.modify_form_class(request.POST)
+        if form.is_valid():
+            # <process form cleaned data>
+            currentCourse = request.POST.get('course', None)
+            currentSectionNumber = request.POST.get('currentSectionNumber', None)
+            currentCourseList = Course.objects.filter(courseCode=currentCourse)
+            Section.objects.filter(course=currentCourseList.first(), sectionNumber=currentSectionNumber).update(sectionNumber=form.cleaned_data['sectionNumber'])
+            messages.success(request, "Section modified successfully.", extra_tags='alert-success')
+            return HttpResponseRedirect('/')
+
+        return render(request, self.modify_template_name, {'form': form})
 
 class DeleteCourseForm(View):
-    form_class = DeleteCourseForm
+    form_class = EditCourseForm
     initial = {'key': 'value'}
     template_name = 'deleteCourseForm.html'
 
@@ -162,14 +287,20 @@ class DeleteCourseForm(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            c = Course.objects.get(courseCode=form.cleaned_data['courseCode'])
-            c.delete()
-            return HttpResponseRedirect('/')
-
+            # <process form cleaned data>
+            courseList = Course.objects.filter(courseCode=form.cleaned_data['courseCode'])
+            if courseList:
+                for course in courseList:
+                    course.delete()
+                messages.success(request, "Course deleted successfully.", extra_tags='alert-success')
+                return HttpResponseRedirect('/')
+            else:
+                message = "No such course exists"
+                messages.error(request, message, extra_tags='alert-danger')
         return render(request, self.template_name, {'form': form})
 
 class DeleteSectionForm(View):
-    form_class = DeleteSectionForm
+    form_class = EditSectionForm
     initial = {'key': 'value'}
     template_name = 'deleteSectionForm.html'
 
@@ -181,15 +312,19 @@ class DeleteSectionForm(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             # <process form cleaned data>
-            # add delte logic here
-            s = Section.objects.filter(course=form.instance.course, sectionNumber=form.instance.sectionNumber)
-            s.delete()
-            return HttpResponseRedirect('/')
-
+            sectionList = Section.objects.filter(course=form.instance.course, sectionNumber=form.instance.sectionNumber)
+            if sectionList:
+                for section in sectionList:
+                    section.delete()
+                messages.success(request, "Section deleted successfully.", extra_tags='alert-success')
+                return HttpResponseRedirect('/')
+            else:
+                message = "No such section exists."
+                messages.error(request, message, extra_tags='alert-danger')
         return render(request, self.template_name, {'form': form})
 
 class DeleteSubSectionForm(View):
-    form_class = DeleteSubSectionForm
+    form_class = EditSubSectionForm
     initial = {'key': 'value'}
     template_name = 'deleteSubSectionForm.html'
 
@@ -201,25 +336,16 @@ class DeleteSubSectionForm(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             # <process form cleaned data>
-            s = SubSection.objects.filter(section=form.instance.section, type=form.instance.type)
-            s.delete()
-            return HttpResponseRedirect('/')
-
+            subSectionList = SubSection.objects.filter(section=form.instance.section, type=form.instance.type)
+            if subSectionList:
+                for subSection in subSectionList:
+                    subSection.delete()
+                messages.success(request, "Sub section deleted successfully.", extra_tags='alert-success')
+                return HttpResponseRedirect('/')
+            else:
+                message = "No such sub section exists."
+                messages.error(request, message, extra_tags='alert-danger')
         return render(request, self.template_name, {'form': form})
-
-
-
-class ModifyCourseForm(generic.TemplateView):
-	def get(self, request, *args, **kwargs):
-		return render(request, 'modifyCourseForm.html')
-
-class ModifySectionForm(generic.TemplateView):
-	def get(self, request, *args, **kwargs):
-		return render(request, 'modifySectionForm.html')
-
-class ModifySubSectionForm(generic.TemplateView):
-	def get(self, request, *args, **kwargs):
-		return render(request, 'modifySubSectionForm.html')
 
 class ViewTimetableForm(View):
     form_class = ViewInstructorForm
@@ -234,12 +360,9 @@ class ViewTimetableForm(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             # <process form cleaned data>
-            # form.save()
             instr = form.cleaned_data.get('instructorName')
-            sectionList = instr.subSection1.all() | instr.subSection2.all()
-            return render(request, self.template_name, {'form': form, 'sectionList': sectionList, 'displayTable': sectionList.exists()})
-            # return HttpResponseRedirect('/')
-
+            subSectionList = instr.subSection1.all() | instr.subSection2.all()
+            return render(request, self.template_name, {'form': form, 'subSectionList': subSectionList, 'displayTable': subSectionList.exists()})
         return render(request, self.template_name, {'form': form})
 
 class DownloadTimeTable(View):

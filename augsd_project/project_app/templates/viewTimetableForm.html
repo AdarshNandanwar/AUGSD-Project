@@ -5,14 +5,15 @@
 {% block content %}
 
 <div class="container">
-    <div class="row text-center" style="margin-top: 5%;">
+    <div class="row text-center">
         <div class="col-10 shadow mb-5 table-light rounded"
             style="padding: 80px 40px; margin: 0px auto; background-color: rgba(0, 0, 0, 0.05);">
 
             <h1>View Timetable</h1>
             <div class="row">
                 <div class="col" style="margin: 0px auto;">
-                    <form action="/view-timetable/" method="post" style="width: 50%; margin: 0px auto; min-width: 250px;">
+                    <form action="/view-timetable/" method="post"
+                        style="width: 50%; margin: 0px auto; min-width: 250px;">
                         {% csrf_token %}
                         {{ form|crispy }}
                         <input class="btn btn-dark" type="submit" value="Submit">
@@ -20,33 +21,33 @@
                     <br>
                     <div style="padding: 20px;">
                         {% if displayTable %}
-                            <hr>
-                            <table class="table table-striped">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Course</th>
-                                        <th scope="col">Section</th>
-                                        <th scope="col">Type</th>
-                                        <th scope="col">Room</th>
-                                        <th scope="col">Days (M,T,W,Th,F,Sa,Su)</th>
-                                        <th scope="col">Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for section in sectionList %}
-                                        <tr>
-                                            <th scope="row">{{forloop.counter}}</th>
-                                            <td>{{ section.section.course }}</td>
-                                            <td>{{ section.section.sectionNumber }}</td>
-                                            <td>{{ section.type }}</td>
-                                            <td>{{ section.room }}</td>
-                                            <td>{{ section.days }}</td>
-                                            <td>{{ section.startTime }}-{{ section.endTime }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                        <hr>
+                        <table class="table table-striped table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Course</th>
+                                    <th scope="col">Section</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Room</th>
+                                    <th scope="col">Days (M,T,W,Th,F,Sa,Su)</th>
+                                    <th scope="col">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subSection in subSectionList %}
+                                <tr>
+                                    <th scope="row">{{forloop.counter}}</th>
+                                    <td>{{ subSection.section.course }}</td>
+                                    <td>{{ subSection.section.sectionNumber }}</td>
+                                    <td>{{ subSection.type }}</td>
+                                    <td>{{ subSection.room }}</td>
+                                    <td>{{ subSection.days }}</td>
+                                    <td>{{ subSection.startTime }}-{{ subSection.endTime }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                         {% endif %}
                     </div>
                 </div>

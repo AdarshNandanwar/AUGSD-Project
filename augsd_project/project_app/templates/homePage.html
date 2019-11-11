@@ -7,13 +7,14 @@
 {% load static %}
 
 <div class="container">
-    <div class="row text-center" style="margin-top: 5%;">
+    <div class="row text-center">
         <div class="col shadow mb-5 table-light rounded"
             style="padding: 40px; margin: 0px auto; background-color: rgba(0, 0, 0, 0.03);">
             <img src="{% static 'images/bitsLogo.png' %}" alt="logo" style="width: 80%; max-width: 400px;;">
             <h3 style="margin: 10px;">Course Registration Portal</h3>
             <div class="row" style="margin-top: 30px; justify-content: space-around;">
-                <div class="col-md-3 shadow border rounded" style="margin:10px; padding: 20px; background-color: rgba(0, 0, 0, 0.04);">
+                <div class="col-md-3 shadow border rounded"
+                    style="margin:10px; padding: 20px; background-color: rgba(0, 0, 0, 0.04);">
                     <h4>Add</h4>
                     <div style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 100%;" href="/add-course/">Add Course</a>
@@ -25,7 +26,8 @@
                         <a class="btn btn-dark" style="width: 100%;" href="/add-subsection/">Add Sub Section</a>
                     </div>
                 </div>
-                <div class="col-md-3 shadow border rounded" style="margin:10px; padding: 20px;background-color: rgba(0, 0, 0, 0.04);">
+                <div class="col-md-3 shadow border rounded"
+                    style="margin:10px; padding: 20px;background-color: rgba(0, 0, 0, 0.04);">
                     <h4>Modify</h4>
                     <div style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 100%;" href="/modify-course/">Modify Course</a>
@@ -37,7 +39,8 @@
                         <a class="btn btn-dark" style="width: 100%;" href="/modify-subsection/">Modify Sub Section</a>
                     </div>
                 </div>
-                <div class="col-md-3 shadow border rounded" style="margin:10px; padding: 20px; background-color: rgba(0, 0, 0, 0.04);">
+                <div class="col-md-3 shadow border rounded"
+                    style="margin:10px; padding: 20px; background-color: rgba(0, 0, 0, 0.04);">
                     <h4>Delete</h4>
                     <div style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 100%;" href="/delete-course/">Delete Course</a>
@@ -51,13 +54,13 @@
                 </div>
             </div>
             <div class="row" style="margin-top: 30px;">
-                <div class="col-6">
-                    <div style="padding: 10px; text-align: right;">
+                <div class="col-md-6">
+                    <div id="section1" style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 50%;" href="/view-timetable/">View Timetable</a>
                     </div>
                 </div>
-                <div class="col-6">
-                    <div style="padding: 10px; text-align: left;">
+                <div class="col-md-6">
+                    <div id="section2" style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 50%;" href="/download-timetable/">Download Timetable</a>
                     </div>
                 </div>
@@ -65,5 +68,18 @@
         </div>
     </div>
 </div>
+
+<style>
+    @media (min-width: 992px) {
+        #section1 {
+            text-align: right;
+        }
+    }
+    @media (min-width: 992px) {
+        #section2 {
+            text-align: left;
+        }
+    }
+</style>
 
 {% endblock %}

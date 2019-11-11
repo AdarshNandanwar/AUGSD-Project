@@ -22,9 +22,9 @@ class Room(models.Model):
 class Course(models.Model):
     courseCode = models.CharField(max_length=10, primary_key=True)
     courseName = models.CharField(max_length=100)
+    courseIC = models.ForeignKey(Instructor,related_name="InstructorIncharge",default=None)
     midsemDateTime = models.DateTimeField(null=False)
     compreDateTime = models.DateTimeField(null=False)
-    courseIC = models.ForeignKey(Instructor,related_name="InstructorIncharge",default=None)
 
     def __str__(self):
         return str(self.courseCode)

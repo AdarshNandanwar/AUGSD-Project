@@ -42,19 +42,45 @@ class SubSectionForm(forms.ModelForm):
             "endTime": "End Time Hour(24 hour format)",
         }
 
-# class DeleteCourseForm(forms.ModelForm):  
-#     class Meta:  
-#         model = Course  
-#         fields = ['courseCode']
-#         labels = {
-#             "courseCode": "Course Code",
-#         }
+class ModifyCourseForm(forms.ModelForm):
+    midsemDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Midsem Date and Time (dd/mm/yy h)")
+    compreDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Compre Date and Time (dd/mm/yy h)")
+    class Meta:  
+        model = Course  
+        fields = ['courseName', 'courseIC','midsemDateTime','compreDateTime']
+        labels = {
+            "courseCode": "Course Code",
+            "courseName": "Course Name",
+            "midsemDateTime": "Midsem Date and Time",
+            "compreDateTime": "Compre Date and Time",
+            "courseIC": "Course IC",
+        }
 
-class DeleteCourseForm(forms.Form):  
-    courseCode = forms.CharField(max_length=10)
+class ModifySectionForm(forms.ModelForm):  
+    class Meta:  
+        model = Section  
+        fields = ['sectionNumber']
+        labels = {
+            "sectionNumber": "Section Number",
+        }
+
+class ModifySubSectionForm(forms.ModelForm):  
+    class Meta:  
+        model = SubSection  
+        fields = "__all__"  
+        labels = {
+            "instructor1": "Instructor 1",
+            "instructor2": "Instructor 2",
+            "days": "Days(6 length bitstring M,W,F = 101010)",
+            "startTime": "Start Time Hour(24 hour format)",
+            "endTime": "End Time Hour(24 hour format)",
+        }
+
+class EditCourseForm(forms.Form):  
+    courseCode = forms.CharField(max_length=10, label="Course Code")
 
 
-class DeleteSectionForm(forms.ModelForm):  
+class EditSectionForm(forms.ModelForm):  
     class Meta:  
         model = Section  
         fields = ['course','sectionNumber']
@@ -62,7 +88,7 @@ class DeleteSectionForm(forms.ModelForm):
             "sectionNumber": "Section Number",
         }
 
-class DeleteSubSectionForm(forms.ModelForm):  
+class EditSubSectionForm(forms.ModelForm):  
     class Meta:  
         model = SubSection  
         fields = ['section', 'type']
