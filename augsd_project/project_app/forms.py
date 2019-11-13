@@ -43,8 +43,8 @@ class SubSectionForm(forms.ModelForm):
         }
 
 class ModifyCourseForm(forms.ModelForm):
-    midsemDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Midsem Date and Time (dd/mm/yy h)")
-    compreDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Compre Date and Time (dd/mm/yy h)")
+    midsemDateTime = DateTimeField(widget=forms.widgets.DateTimeInput(format="%d/%m/%y %H"), input_formats=["%d/%m/%y %H"], label="Midsem Date and Time (dd/mm/yy h)")
+    compreDateTime = DateTimeField(widget=forms.widgets.DateTimeInput(format="%d/%m/%y %H"), input_formats=["%d/%m/%y %H"], label="Compre Date and Time (dd/mm/yy h)")
     class Meta:  
         model = Course  
         fields = ['courseName', 'courseIC','midsemDateTime','compreDateTime']
@@ -67,7 +67,7 @@ class ModifySectionForm(forms.ModelForm):
 class ModifySubSectionForm(forms.ModelForm):  
     class Meta:  
         model = SubSection  
-        fields = "__all__"  
+        fields = ['type','instructor1','instructor2','days','startTime','endTime','room'] 
         labels = {
             "instructor1": "Instructor 1",
             "instructor2": "Instructor 2",

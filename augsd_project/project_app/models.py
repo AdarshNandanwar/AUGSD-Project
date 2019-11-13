@@ -27,14 +27,14 @@ class Course(models.Model):
     compreDateTime = models.DateTimeField(null=False)
 
     def __str__(self):
-        return str(self.courseCode)
+        return self.courseCode
 
 class Section(models.Model):
     course = models.ForeignKey(Course,related_name="section",default=None)
     sectionNumber = models.IntegerField()
 
     def __str__(self):
-        return str((self.course, self.sectionNumber))
+        return self.course.courseCode+','+str(self.sectionNumber)
 
 class SubSection(models.Model):
     TYPE_CHOICES = (
@@ -53,4 +53,4 @@ class SubSection(models.Model):
     room = models.ForeignKey(Room, related_name='subSection', default=None)
 
     def __str__(self):
-        return str((self.section.course, self.type))
+        return self.section.course.courseName+','+str(self.section.sectionNumber)+','+self.type
