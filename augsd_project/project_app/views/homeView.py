@@ -442,7 +442,7 @@ class ViewTimetableForm(View):
             # <process form cleaned data>
             instr = form.cleaned_data.get('instructorName')
             subSectionList = instr.subSection1.all() | instr.subSection2.all()
-            return render(request, self.template_name, {'form': form, 'subSectionList': subSectionList, 'displayTable': subSectionList.exists()})
+            return render(request, self.template_name, {'form': form, 'subSectionList': subSectionList, 'displayTable': subSectionList.exists(), 'rowRange': range(11), 'colRange': range(6)})
         return render(request, self.template_name, {'form': form})
 
 class DownloadTimeTable(View):
