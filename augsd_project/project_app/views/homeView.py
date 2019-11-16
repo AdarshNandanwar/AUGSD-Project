@@ -7,6 +7,10 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.forms.models import model_to_dict
 
+# # for 404 page
+# from django.shortcuts import render_to_response
+# from django.template import RequestContext
+
 from django.views import View
 from project_app.forms import *
 from project_app.models import *
@@ -246,10 +250,7 @@ class ModifySubSectionForm(generic.TemplateView):
             form = self.form_class(initial=self.initial)
             return render(request, self.template_name, {'form': form})
         else:
-            print(paramsSectionId)
-            print(paramsType)
             section = Section.objects.filter(pk=paramsSectionId)
-            print(section)
             subSectionList = SubSection.objects.filter(section=section.first(), type=paramsType)
             if subSectionList:
                 form = self.modify_form_class(instance=subSectionList.first())
@@ -281,7 +282,6 @@ class ModifySubSectionForm(generic.TemplateView):
 
             if not isValid:
                 messages.error(request, message, extra_tags='alert-danger')
-                print("hello")
                 form = self.form_class(initial=self.initial)
                 return render(request, self.template_name, {'form': form})
 
@@ -427,10 +427,10 @@ class DeleteSubSectionForm(View):
                 messages.error(request, message, extra_tags='alert-danger')
         return render(request, self.template_name, {'form': form})
 
-class ViewTimetableForm(View):
+class ViewInstructorTimetableForm(View):
     form_class = ViewInstructorForm
     initial = {'key': 'value'}
-    template_name = 'viewTimetableForm.html'
+    template_name = 'viewInstructorTimetableForm.html'
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
@@ -442,6 +442,24 @@ class ViewTimetableForm(View):
             # <process form cleaned data>
             instr = form.cleaned_data.get('instructorName')
             subSectionList = instr.subSection1.all() | instr.subSection2.all()
+            return render(request, self.template_name, {'form': form, 'subSectionList': subSectionList, 'displayTable': subSectionList.exists(), 'rowRange': range(11), 'colRange': range(6)})
+        return render(request, self.template_name, {'form': form})
+
+class ViewRoomTimetableForm(View):
+    form_class = ViewRoomForm
+    initial = {'key': 'value'}
+    template_name = 'viewRoomTimetableForm.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form, 'displayTable': False})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            # <process form cleaned data>
+            room = form.cleaned_data.get('room')
+            subSectionList = room.subSection.all()
             return render(request, self.template_name, {'form': form, 'subSectionList': subSectionList, 'displayTable': subSectionList.exists(), 'rowRange': range(11), 'colRange': range(6)})
         return render(request, self.template_name, {'form': form})
 
@@ -487,3 +505,9 @@ class DownloadTimeTable(View):
                             formatedInstructor += ", "+subSection.instructor2.name
                     writer.writerow([course.courseCode,course.courseName,section.sectionNumber,subSection.type,formatedInstructor, formatedDaysTime, subSection.room, course.compreDateTime.strftime("%d/%m/%y %H")])
         return response
+
+# def handler404(request):
+#     response = render_to_response('404.html', {},
+#                                   context_instance=RequestContext(request))
+#     response.status_code = 404
+#     return response

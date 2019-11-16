@@ -6,10 +6,10 @@
 
 {% load static %}
 
-<div class="container">
+<div class="container-fluid">
     <div class="row text-center">
         <div class="col shadow mb-5 table-light rounded"
-            style="padding: 40px; margin: 0px auto; background-color: rgba(0, 0, 0, 0.03);">
+            style="padding: 20px 20px 50px 20px; margin: 0px 5%; background-color: rgba(0, 0, 0, 0.03);">
             <img src="{% static 'images/bitsLogo.png' %}" alt="logo" style="width: 80%; max-width: 400px;;">
             <h3 style="margin: 10px;">Course Registration Portal</h3>
             <div class="row" style="margin-top: 30px; justify-content: space-around;">
@@ -53,15 +53,21 @@
                     </div>
                 </div>
             </div>
+            <hr>
             <div class="row" style="margin-top: 30px;">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div id="section1" style="padding: 10px;">
-                        <a class="btn btn-dark" style="width: 50%;" href="/view-timetable/"><i class="far fa-calendar-alt d-none d-lg-inline" style="margin-right: 10px;"></i>View Timetable</a>
+                        <a class="btn btn-dark" style="width: 80%;" href="/view-instructor-timetable/"><i class="far fa-calendar-alt d-none d-lg-inline" style="margin-right: 10px;"></i>View Instructor Timetable</a>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div id="section2" style="padding: 10px;">
-                        <a class="btn btn-dark" style="width: 50%;" href="/download-timetable/"><i class="fas fa-download d-none d-lg-inline" style="margin-right: 10px;"></i>Download Timetable</a>
+                        <a class="btn btn-dark" style="width: 80%;" href="/download-timetable/"><i class="fas fa-download d-none d-lg-inline" style="margin-right: 10px;"></i>Download Timetable</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="section3" style="padding: 10px;">
+                        <a class="btn btn-dark" style="width: 80%;" href="/view-room-timetable/"><i class="far fa-calendar-alt d-none d-lg-inline" style="margin-right: 10px;"></i>View Room Timetable</a>
                     </div>
                 </div>
             </div>
@@ -70,15 +76,25 @@
 </div>
 
 <style>
-    @media (min-width: 992px) {
+    /* @media (min-width: 992px) {
         #section1 {
             text-align: right;
         }
     }
     @media (min-width: 992px) {
         #section2 {
+            text-align: center;
+        }
+    }
+    @media (min-width: 992px) {
+        #section3 {
             text-align: left;
         }
+    } */
+
+    a.btn{
+        font-size: 18px !important;
+        padding: 10px !important;
     }
 </style>
 

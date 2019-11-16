@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 
@@ -48,8 +49,8 @@ class SubSection(models.Model):
     instructor1 = models.ForeignKey(Instructor, related_name='subSection1', default=None)   #backward relationship
     instructor2 = models.ForeignKey(Instructor, related_name='subSection2', default=None, null=True, blank=True)   #backward relationship
     days = models.CharField(max_length = 6, validators=[MinLengthValidator(6)])
-    startTime = models.IntegerField()
-    endTime = models.IntegerField()
+    startTime = models.IntegerField(validators=[MaxValueValidator(23), MinValueValidator(8)])
+    endTime = models.IntegerField(validators=[MaxValueValidator(23), MinValueValidator(9)])
     room = models.ForeignKey(Room, related_name='subSection', default=None)
 
     def __str__(self):

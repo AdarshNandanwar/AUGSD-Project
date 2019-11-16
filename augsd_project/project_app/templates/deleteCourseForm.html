@@ -10,7 +10,7 @@
 
                 <h1>Delete Course</h1>
                 <div class="row">
-                    <div class="col" style="margin: 0px auto;">
+                    <div class="col" style="margin: 20px auto;">
                         <form action="/delete-course/" method="post">
                             {% csrf_token %}
                             {{ form|crispy }}
