@@ -6,15 +6,16 @@
 
 {% load static %}
 
+
 <div class="container-fluid">
     <div class="row text-center">
-        <div class="col shadow mb-5 table-light rounded"
-            style="padding: 20px 20px 50px 20px; margin: 0px 5%; background-color: rgba(0, 0, 0, 0.03);">
+        <div class="col shadow mb-5 table-light rounded box"
+            style="padding: 20px 20px 50px 20px; margin: 0px 5%;">
             <img src="{% static 'images/bitsLogo.png' %}" alt="logo" style="width: 80%; max-width: 400px;;">
             <h3 style="margin: 10px;">Course Registration Portal</h3>
             <div class="row" style="margin-top: 30px; justify-content: space-around;">
                 <div class="col-md-3 shadow border rounded"
-                    style="margin:10px; padding: 20px; background-color: rgba(0, 0, 0, 0.04);">
+                    style="margin:10px; padding: 20px;">
                     <h4>Add</h4>
                     <div style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 100%;" href="/add-course/">Add Course</a>
@@ -27,7 +28,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 shadow border rounded"
-                    style="margin:10px; padding: 20px;background-color: rgba(0, 0, 0, 0.04);">
+                    style="margin:10px; padding: 20px;">
                     <h4>Modify</h4>
                     <div style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 100%;" href="/modify-course/">Modify Course</a>
@@ -40,7 +41,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 shadow border rounded"
-                    style="margin:10px; padding: 20px; background-color: rgba(0, 0, 0, 0.04);">
+                    style="margin:10px; padding: 20px;">
                     <h4>Delete</h4>
                     <div style="padding: 10px;">
                         <a class="btn btn-dark" style="width: 100%;" href="/delete-course/">Delete Course</a>
@@ -57,23 +58,30 @@
             <div class="row" style="margin-top: 30px;">
                 <div class="col-md-4">
                     <div id="section1" style="padding: 10px;">
-                        <a class="btn btn-dark" style="width: 80%;" href="/view-instructor-timetable/"><i class="far fa-calendar-alt d-none d-lg-inline" style="margin-right: 10px;"></i>View Instructor Timetable</a>
+                        <a class="btn btn-dark" style="width: 80%;" href="/view-instructor-timetable/"><i
+                                class="far fa-calendar-alt d-none d-lg-inline" style="margin-right: 10px;"></i>View
+                            Instructor Timetable</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div id="section2" style="padding: 10px;">
-                        <a class="btn btn-dark" style="width: 80%;" href="/download-timetable/"><i class="fas fa-download d-none d-lg-inline" style="margin-right: 10px;"></i>Download Timetable</a>
+                        <a class="btn btn-dark" style="width: 80%;" href="/download-timetable/"><i
+                                class="fas fa-download d-none d-lg-inline" style="margin-right: 10px;"></i>Download
+                            Timetable</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div id="section3" style="padding: 10px;">
-                        <a class="btn btn-dark" style="width: 80%;" href="/view-room-timetable/"><i class="far fa-calendar-alt d-none d-lg-inline" style="margin-right: 10px;"></i>View Room Timetable</a>
+                        <a class="btn btn-dark" style="width: 80%;" href="/view-room-timetable/"><i
+                                class="far fa-calendar-alt d-none d-lg-inline" style="margin-right: 10px;"></i>View Room
+                            Timetable</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <style>
     /* @media (min-width: 992px) {
@@ -92,7 +100,7 @@
         }
     } */
 
-    a.btn{
+    a.btn {
         font-size: 18px !important;
         padding: 10px !important;
     }

@@ -1,0 +1,25 @@
+*{
+    margin : 0;
+    padding: 0;
+    font-family: 'Raleway', sans-serif;
+}
+
+html, body{
+    background: #29366E;
+}
+
+.box{
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    padding: 80px 40px;
+    margin: 0px auto;
+}
+
+ul.navbar-nav a{
+    transition: all .25s ease;
+}
+
+ul.navbar-nav a:hover { 
+    background-color: #29366E !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    transition: all .25s ease;
+}
