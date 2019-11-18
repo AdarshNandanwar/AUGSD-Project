@@ -15,29 +15,22 @@ class ViewRoomForm(forms.ModelForm):
         fields = ['room']
 
 class CourseForm(forms.ModelForm):
-    courseCode = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'placeholder': 'e.g. CS F213'}))
-    courseName = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'e.g. OBJECT ORIENTED PROGRAMMING'}))
+    courseCode = forms.CharField(label="Course Code", max_length=10, widget=forms.TextInput(attrs={'placeholder': 'e.g. CS F213'}))
+    courseName = forms.CharField(label="Course Name", max_length=100, widget=forms.TextInput(attrs={'placeholder': 'e.g. OBJECT ORIENTED PROGRAMMING'}))
     midsemDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Midsem Date and Time (dd/mm/yy h)", widget=forms.TextInput(attrs={'placeholder': 'e.g. 4/10/19 9'}))
     compreDateTime = DateTimeField(input_formats=["%d/%m/%y %H"], label="Compre Date and Time (dd/mm/yy h)", widget=forms.TextInput(attrs={'placeholder': 'e.g. 9/12/19 14'}))
     class Meta:  
         model = Course  
         fields = "__all__"  
         labels = {
-            "courseCode": "Course Code",
-            "courseName": "Course Name",
-            "midsemDateTime": "Midsem Date and Time",
-            "compreDateTime": "Compre Date and Time",
             "courseIC": "Course IC",
         }
 
 class SectionForm(forms.ModelForm):  
-    sectionNumber = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder': 'e.g. 1'}))
+    sectionNumber = forms.IntegerField(label="Section Number", widget=forms.NumberInput(attrs={'placeholder': 'e.g. 1'}))
     class Meta:  
         model = Section  
-        fields = "__all__"  
-        labels = {
-            "sectionNumber": "Section Number",
-        }
+        fields = "__all__"
 
 class SubSectionForm(forms.ModelForm):  
     days = forms.CharField(max_length = 6, label="Days (6 length bitstring M,W,F = 101010)", widget=forms.TextInput(attrs={'placeholder': 'e.g. 101010'}))
@@ -90,13 +83,10 @@ class EditCourseForm(forms.Form):
 
 
 class EditSectionForm(forms.ModelForm):  
-    sectionNumber = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder': 'e.g. 1'}))
+    sectionNumber = forms.IntegerField(label="Section Number", widget=forms.NumberInput(attrs={'placeholder': 'e.g. 1'}))
     class Meta:  
         model = Section  
         fields = ['course','sectionNumber']
-        labels = {
-            "sectionNumber": "Section Number",
-        }
 
 class EditSubSectionForm(forms.ModelForm):  
     class Meta:  
