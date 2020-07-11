@@ -1,4 +1,4 @@
-# AUGSD-Project
+# AUGSD Time Table Project
 
 - Make the fork (one time)
 	- Press **Fork** button from [this](https://github.com/AdarshNandanwar/AUGSD-Project) account and select your account.
